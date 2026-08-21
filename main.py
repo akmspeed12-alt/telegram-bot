@@ -4,10 +4,9 @@ from telethon.tl.functions.photos import UploadProfilePhotoRequest
 from telethon.tl.functions.channels import EditBannedRequest
 from telethon.tl.types import ChatBannedRights
 
-# قراءة البيانات من الـ Secrets بأمان
-api_id = os.environ.get('API_ID')
-api_hash = os.environ.get('API_HASH')
-api_id = int(api_id)
+# البيانات مباشرة لتجنب أخطاء الـ Secrets
+api_id = 38739119
+api_hash = '76fd508f4878e8d77cd68e88ba65bc85'
 
 client = TelegramClient('my_userbot_session', api_id, api_hash)
 
@@ -34,7 +33,6 @@ async def set_profile_photo(event):
         file = await client.upload_file(photo_path)
         await client(UploadProfilePhotoRequest(file=file))
         os.remove(photo_path)
-        # الرد بتعديل نفس الرسالة الأصلية
         await event.edit('×تم التغير بنجاح!')
     else:
         await event.edit('الرجاء الرد على صورة لتغييرها!')
@@ -53,7 +51,6 @@ async def mute_user(event):
     target_user = reply_msg.sender_id
     
     try:
-        # استخدام entity لتجنب خطأ الـ peer وكتم العضو حتى لو كان مشرفاً
         await client(EditBannedRequest(
             entity=event.chat_id,
             user_id=target_user,
@@ -61,7 +58,7 @@ async def mute_user(event):
         ))
         await event.edit('تم الكتم بنجاح!')
     except Exception as e:
-        await event.edit(f'حدث خطأ: تأكد من أن لديك صلاحية حظر المشرفين/الأعضاء.\n{str(e)}')
+        await event.edit(f'حدث خطأ: تأكد من أن لديك صلاحية كتم المشرفين/الأعضاء.\n{str(e)}')
 
 print("Userbot is running and connected...")
 client.start()

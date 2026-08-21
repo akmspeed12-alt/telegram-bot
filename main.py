@@ -4,22 +4,19 @@ import asyncio
 from telethon import TelegramClient, events
 from telethon.tl.functions.photos import UploadProfilePhotoRequest, DeletePhotosRequest
 from telethon.tl.functions.channels import EditBannedRequest
-from telethon.tl.types import ChatBannedRights, InputPhoto
+from telethon.tl.types import ChatBannedRights
 
-# بيانات الاتصال
 api_id = 38739119
 api_hash = '76fd508f4878e8d77cd68e88ba65bc85'
 
 client = TelegramClient('my_userbot_session', api_id, api_hash)
 
-# حقوق الكتم التام
 mute_rights = ChatBannedRights(
     until_date=None,
     send_messages=True, send_media=True, send_stickers=True,
     send_gifs=True, send_games=True, send_inline=True, embed_links=True
 )
 
-# --- 1. الأوامر العامة ومعلومات النظام ---
 @client.on(events.NewMessage(outgoing=True, pattern='(?i)^ping$'))
 async def ping_cmd(event):
     start = time.time()
@@ -42,16 +39,6 @@ async def id_cmd(event):
     user = await event.get_sender()
     await event.edit(f"• **معلومات الحساب:**\n- الاسم: `{user.first_name}`\n- الايدي: `{user.id}`\n- اليوزر: `@{user.username}`")
 
-@client.on(events.NewMessage(outgoing=True, pattern='(?i)^inf$'))
-async def inf_cmd(event):
-    if not event.is_group:
-        await event.edit("هذا الأمر للمجموعات فقط!")
-        return
-    chat = await event.get_chat()
-    await event.edit(f"• **معلومات المجموعة:**\n- الاسم: `{chat.title}`\n- ايدي المجموعة: `{chat.id}`\n- الأعضاء: `{chat.participants_count if hasattr(chat, 'participants_count') else 'غير معروف'}`")
-
-
-# --- 2. أوامر الحساب الشخصي ---
 @client.on(events.NewMessage(outgoing=True, pattern='(?i)^setprofile$'))
 async def set_profile_photo(event):
     if not event.is_reply:
@@ -75,8 +62,6 @@ async def del_profile_photo(event):
     else:
         await event.edit("• لا توجد صور شخصية لحذفها.")
 
-
-# --- 3. أوامر الإدارة والحماية ---
 @client.on(events.NewMessage(outgoing=True, pattern='(?i)^كتم$'))
 async def mute_user(event):
     if not event.is_reply or not event.is_group:
@@ -100,8 +85,6 @@ async def ban_user(event):
     except Exception as e:
         await event.edit(f'خطأ:\n{str(e)}')
 
-
-# --- 4. الألعاب والأنيميشن ---
 @client.on(events.NewMessage(outgoing=True, pattern='(?i)^reload$'))
 async def reload_anim(event):
     anim = ["▰▱▱▱▱ 20%", "▰▰▰▱▱ 60%", "▰▰▰▰▰ 100%", "✨ تم الانتهاء من إعادة التحميل بنجاح!"]
@@ -115,8 +98,8 @@ async def love_anim(event):
     await asyncio.sleep(1)
     await event.edit("██████████ 100%\n💖 حبك مكتسح الدنيا يا غالي!")
 
-
 print("SOUCE HUDA IS RUNNING...")
 client.start()
 client.run_until_disconnected()
+
     
